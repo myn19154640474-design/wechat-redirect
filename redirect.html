@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面跳转中</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        neutral: '#64748B'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .pulse-slow {
+                animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- 页面容器 -->
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+        <!-- 顶部进度条 -->
+        <div class="h-1 bg-primary" id="progressBar"></div>
+        
+        <!-- 内容区域 -->
+        <div class="p-8 text-center">
+            <!-- 图标 -->
+            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 pulse-slow">
+                <i class="fa fa-exchange text-2xl text-primary"></i>
+            </div>
+            
+            <!-- 标题 -->
+            <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-slate-800 mb-3">页面跳转中</h1>
+            
+            <!-- 描述 -->
+            <p class="text-neutral mb-6">我们正在将您引导至目标页面</p>
+            
+            <!-- 倒计时 -->
+            <div class="mb-8">
+                <p class="text-sm text-neutral mb-2">如果没有自动跳转，请点击下方按钮</p>
+                <p class="text-primary font-medium">
+                    即将跳转 <span id="countdown" class="font-bold">5</span> 秒
+                </p>
+            </div>
+            
+            <!-- 跳转按钮 -->
+            <a href="https://example.com" id="redirectLink" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-colors duration-200 shadow-sm">
+                立即前往
+                <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+        
+        <!-- 底部信息 -->
+        <div class="bg-slate-50 py-4 px-6 text-center text-xs text-neutral">
+            <p>© 2023 网站名称 版权所有</p>
+        </div>
+    </div>
+
+    <script>
+        // 配置跳转目标和倒计时时间
+        const targetUrl = "https://example.com"; // 替换为实际目标URL
+        const countdownSeconds = 5; // 倒计时秒数
+        
+        // 获取DOM元素
+        const countdownEl = document.getElementById('countdown');
+        const redirectLink = document.getElementById('redirectLink');
+        const progressBar = document.getElementById('progressBar');
+        
+        // 设置跳转链接
+        redirectLink.href = targetUrl;
+        
+        // 初始化倒计时
+        let remainingSeconds = countdownSeconds;
+        countdownEl.textContent = remainingSeconds;
+        
+        // 更新进度条
+        function updateProgress(percent) {
+            progressBar.style.width = `${percent}%`;
+        }
+        
+        // 倒计时定时器
+        const countdownInterval = setInterval(() => {
+            remainingSeconds--;
+            countdownEl.textContent = remainingSeconds;
+            
+            // 更新进度
+            const progress = 100 - (remainingSeconds / countdownSeconds * 100);
+            updateProgress(progress);
+            
+            // 倒计时结束，跳转
+            if (remainingSeconds <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = targetUrl;
+            }
+        }, 1000);
+        
+        // 初始进度
+        updateProgress(0);
+        
+        // 防止页面关闭提示（可选）
+        window.addEventListener('beforeunload', function(e) {
+            e.preventDefault();
+            e.returnValue = '页面正在跳转中，确定要离开吗？';
+            return e.returnValue;
+        });
+    </script>
+</body>
+</html>
